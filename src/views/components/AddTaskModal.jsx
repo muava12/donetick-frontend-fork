@@ -600,7 +600,7 @@ const TaskInput = ({ autoFocus, onChoreUpdate, isModalOpen, onClose }) => {
       name: taskTitle,
       description: description,
       assignees: finalAssignees,
-      dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+      nextDueDate: dueDate ? new Date(dueDate).toISOString() : null,
       assignedTo: finalAssignedTo,
       assignStrategy: finalAssignStrategy,
       isRolling: false,
@@ -616,19 +616,18 @@ const TaskInput = ({ autoFocus, onChoreUpdate, isModalOpen, onClose }) => {
       projectId: projectId === 'default' ? null : projectId,
     }
 
+    if (hasNotifications) {
+      chore.notification = true
+      chore.notificationMetadata = notificationMetadata
+    }
+
     if (frequency) {
       chore.frequencyType = frequency.frequencyType
       chore.frequencyMetadata = frequency.frequencyMetadata
       chore.frequency = frequency.frequency
-      if (isPlusAccount(userProfile)) {
-        chore.notification = true
-        chore.notificationMetadata = notificationMetadata
-      }
     }
     if (!frequency && dueDate) {
-      // use dueDate converted to UTC:
-      chore.nextDueDate = new Date(dueDate).toUTCString()
-      chore.notificationMetadata = notificationMetadata
+      // already set nextDueDate in the initial object, but we can keep it for clarity if needed
     }
 
     createChoreMutation
